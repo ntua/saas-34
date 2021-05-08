@@ -76,11 +76,6 @@ Router
     }
   });
 })
-
-module.exports = function(req, res) {
-  Router.check(req.url, [req, res]);
-}
-
 .add('api/user/logout', function(req, res) {
   delete req.session.user;
   response({
@@ -129,3 +124,51 @@ module.exports = function(req, res) {
         }
       });
     break;
+    case 'POST':
+      processPOSTRequest(req, function(data) {
+        if(!data.firstName || data.firstName === '') {
+          error('Please fill your first name.', res);
+        } else if(!data.lastName || data.lastName === '') {
+          error('Please fill your last name.', res);
+        } else if(!data.email || data.email === '' || !validEmail(data.email)) {
+          error('Invalid or missing email.', res);
+        } else if(!data.password || data.password === '') {
+          error('Please fill your password.', res);
+        } else {
+          getDatabaseConnection(function(db) {
+            var collection = db.collection('users');
+            data.password = sha1(data.password);
+            collection.insert(data, function(err, docs) {
+              response({
+                success: 'OK'
+              }, res);
+            });
+          });
+        }
+      });
+    break;
+    case 'DELETE':
+      getDatabaseConnection(function(db) {
+        var collection = db.collection('users');
+        collection.remove(
+          { email: req.session.user.email },
+          function(err, docs) {
+            delete req.session.user;
+            response({
+              success: 'OK'
+            }, res);
+          }
+        );
+      });
+    break;
+  };
+})
+.add(function(req, res) {
+  response({
+    success: true
+  }, res);
+});
+
+module.exports = function(req, res) {
+  Router.check(req.url, [req, res]);
+}
