@@ -1,5 +1,6 @@
 var Router = require('./lib/Router')();
 var Home = require('./controllers/Home');
+var Register = require('./controllers/Register');
 var currentPage;
 var body;
 
@@ -18,6 +19,10 @@ window.onload = function() {
   .add('home', function() {
     var p = new Home();
     showPage(p);
+  })
+  .add('register', function() {
+      var p = new Register();
+      showPage(p);
   })
   .add(function() {
     Router.navigate('home');
