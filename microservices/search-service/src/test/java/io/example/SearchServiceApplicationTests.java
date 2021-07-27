@@ -8,7 +8,7 @@ import org.springframework.util.Assert;
 
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
-public class DiscoveryServiceApplicationTests {
+public class SearchServiceApplicationTests {
 
     @Test
     public void testsVoid() {
